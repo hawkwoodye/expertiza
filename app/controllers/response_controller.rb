@@ -24,7 +24,7 @@ class ResponseController < ApplicationController
           reviewee_team = AssignmentTeam.find(map.reviewee_id)
           current_user_id?(response.map.reviewer.user_id) || reviewee_team.has_user(current_user) || (['Administrator','Instructor','Teaching Assistant'].include? current_user.role.name)
         else
-          current_user_id?(response.map.reviewer.user_id)
+          current_user_id?(response.map.reviewer.user_id) || current_user_id?(response.map.reviewee.user_id) || (['Administrator','Instructor','Teaching Assistant'].include? current_user.role.name)
         end
       else
         current_user
