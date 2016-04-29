@@ -13,6 +13,7 @@ describe "Assignment Topic Suggestion Test", :js => true do
       create(:participant)
       create(:student)
       create(:studentb)
+      create(:studentc)
       create(:assignment_node)
       create(:deadline_type,name:"submission")
       create(:deadline_type,name:"review")
@@ -50,7 +51,7 @@ describe "Assignment Topic Suggestion Test", :js => true do
       expect(Assignment.find(2).allow_suggestions).to eq true
 
       visit '/participants/list?id=2&model=Assignment'
-      fill_in "user_name", with: 'student2065'
+      fill_in "user_name", with: 'student10'
       click_button "Add"
       expect(page).to have_content "expertiza@mailinator.com"
       visit '/participants/list?id=2&model=Assignment'
@@ -59,7 +60,8 @@ describe "Assignment Topic Suggestion Test", :js => true do
       expect(page).to have_content "expertiza@mailinator.com"
 
       #login as student11, Note by Xing Pan: modify spec/factories/factories.rb to generate student11 and call "create student" at beginning
-      user = User.find_by_name('student2065')
+      user = User.find_by_name('student10')
+      sleep 1
       stub_current_user(user, user.role.name, user.role)
       visit '/student_task/list'
       expect(page).to have_content "Assignment_suggest_topic"
@@ -75,6 +77,7 @@ describe "Assignment Topic Suggestion Test", :js => true do
       expect(page).to have_content "Thank you for your suggestion"
 
       user = User.find_by_name('instructor6')
+      sleep 1
       stub_current_user(user, user.role.name, user.role)
       
       #instructor approve the suggestion topic
@@ -91,7 +94,7 @@ describe "Assignment Topic Suggestion Test", :js => true do
 
 
    describe "case 2", :js => true do
-    it " student2065 hold suggest topic and suggest a new one and student2065 enroll on waitlist of suggested topic" do
+    it " student10 hold suggest topic and suggest a new one and student10 enroll on waitlist of suggested topic" do
       login_as "instructor6"
       #create an assignment
       visit '/assignments/new?private=0'
@@ -110,9 +113,9 @@ describe "Assignment Topic Suggestion Test", :js => true do
 
       #register student
       visit '/participants/list?id=2&model=Assignment'
-      fill_in "user_name", with: 'student2065'
+      fill_in "user_name", with: 'student10'
       click_button "Add"
-      expect(page).to have_content "student2065"
+      expect(page).to have_content "student10"
       
       #@@@student 2065 need to be registered 
       visit '/participants/list?id=2&model=Assignment'
@@ -120,13 +123,14 @@ describe "Assignment Topic Suggestion Test", :js => true do
       click_button "Add"
       expect(page).to have_content "student11"
 
-      #login_as "student2065"
-      user = User.find_by_name('student2065')
+      #login_as "student10"
+      user = User.find_by_name('student10')
+      sleep 1
       stub_current_user(user, user.role.name, user.role)
       visit '/student_task/list'
       expect(page).to have_content "Assignment_suggest_topic"
 
-      #student2065 suggest topic
+      #student10 suggest topic
       find_link('Assignment_suggest_topic').click
       expect(page).to have_content "Suggest a topic"
       find_link('Suggest a topic').click    
@@ -137,6 +141,7 @@ describe "Assignment Topic Suggestion Test", :js => true do
       expect(page).to have_content "Thank you for your suggestion"
 
       user = User.find_by_name('instructor6')
+      sleep 1
       stub_current_user(user, user.role.name, user.role)
       
       #instructor approve the suggestion topic
@@ -153,6 +158,7 @@ describe "Assignment Topic Suggestion Test", :js => true do
       # the other one (student11) is holding it and suggest another topic and wish to switch to the new one
       #login as student11 and add itself to the wishlist of the topic
       user = User.find_by_name('student11')
+      sleep 1
       stub_current_user(user, user.role.name, user.role)
       visit '/student_task/list'
       ##click_link('Assignments')
@@ -161,8 +167,9 @@ describe "Assignment Topic Suggestion Test", :js => true do
       # Bug found and need the select action name 
       visit '/sign_up_sheet/sign_up?assignment_id=2&id=1'
       
-      # log in student2065 
-      user = User.find_by_name('student2065')
+      # log in student10 
+      user = User.find_by_name('student10')
+      sleep 1
       stub_current_user(user, user.role.name, user.role)
       visit '/student_task/list'
       find_link('Assignment_suggest_topic').click
@@ -176,6 +183,7 @@ describe "Assignment Topic Suggestion Test", :js => true do
       
       # login_as instructor6 to approve the 2nd suggested topic  
       user = User.find_by_name('instructor6')
+      sleep 1
       stub_current_user(user, user.role.name, user.role)
       
       #instructor approve the suggestion topic
@@ -191,7 +199,8 @@ describe "Assignment Topic Suggestion Test", :js => true do
       expect(page).to have_content "Successfully approved the suggestion"
 
       # lgoing as student 2065 to switch to new approved topic 
-      user = User.find_by_name('student2065')
+      user = User.find_by_name('student10')
+      sleep 1
       stub_current_user(user, user.role.name, user.role)
       visit '/student_task/list'
       find_link('Assignment_suggest_topic').click
@@ -203,12 +212,14 @@ describe "Assignment Topic Suggestion Test", :js => true do
    
       # login as student 10 to see if it's holding the topic rather than on the wait list
       user = User.find_by_name('student11')
+      sleep 1
       stub_current_user(user, user.role.name, user.role)
       visit '/student_task/list'
       expect(page).to have_content "suggested_topic"
 
       # login as studnet 11 to see if it's already shifted to the new suggested topic 
-      user = User.find_by_name('student2065')
+      user = User.find_by_name('student10')
+      sleep 1
       stub_current_user(user, user.role.name, user.role)
       visit '/student_task/list'
       expect(page).to have_content "suggested_topic2_will_switch"
@@ -248,7 +259,7 @@ describe "Assignment Topic Suggestion Test", :js => true do
       click_button "Add"
       expect(page).to have_content "expertiza@mailinator.com"
       visit '/participants/list?id=2&model=Assignment'
-      fill_in "user_name", with: 'student2065'
+      fill_in "user_name", with: 'student10'
       click_button "Add"
       expect(page).to have_content "expertiza@mailinator.com"
       #logout instructor6
@@ -256,10 +267,11 @@ describe "Assignment Topic Suggestion Test", :js => true do
 
       #login_as "student11"
       user = User.find_by_name('student11')
+      sleep 1
       stub_current_user(user, user.role.name, user.role)
       visit '/student_task/list'
       expect(page).to have_content "Assignment_suggest_topic"
-      #sleep 1000
+      #sleep 100
 
       #student11 suggest topic
       find_link('Assignment_suggest_topic').click
@@ -270,13 +282,14 @@ describe "Assignment Topic Suggestion Test", :js => true do
       fill_in 'suggestion_description', with: 'suggested_description'
       click_button 'Submit'
       expect(page).to have_content "Thank you for your suggestion"
-      #sleep 1000
+      #sleep 100
 
       #logout student11
       #find_link('Logout').click
       #click_button 'SIGN IN'
       #login_as "instructor6"
       user = User.find_by_name('instructor6')
+      sleep 1
       stub_current_user(user, user.role.name, user.role)
       #find_link('Logout').click
       #login_as "student11"
@@ -295,6 +308,7 @@ describe "Assignment Topic Suggestion Test", :js => true do
       ######################################
       #login_as "student11"
       user = User.find_by_name('student11')
+      sleep 1
       stub_current_user(user, user.role.name, user.role)
       visit '/student_task/list'
       expect(page).to have_content "Assignment_suggest_topic"
@@ -314,6 +328,7 @@ describe "Assignment Topic Suggestion Test", :js => true do
 
       #login_as "instructor6"
       user = User.find_by_name('instructor6')
+      sleep 1
       stub_current_user(user, user.role.name, user.role)
 
       #instructor approve the suggestion topic
@@ -329,6 +344,7 @@ describe "Assignment Topic Suggestion Test", :js => true do
 
       #login_as "student11"
       user = User.find_by_name('student11')
+      sleep 1
       stub_current_user(user, user.role.name, user.role)
       visit '/student_task/list'
       expect(page).to have_content "Assignment_suggest_topic"
@@ -342,8 +358,9 @@ describe "Assignment Topic Suggestion Test", :js => true do
       visit '/student_task/list'
       expect(page).to have_content "suggested_topic"
 
-      #login_as "student2065"
-      user = User.find_by_name('student2065')
+      #login_as "student10"
+      user = User.find_by_name('student10')
+      sleep 1
       stub_current_user(user, user.role.name, user.role)
       visit '/student_task/list'
       expect(page).to have_content "Assignment_suggest_topic"
